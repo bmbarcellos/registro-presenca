@@ -133,6 +133,16 @@
       background: #002e70;
     }
 
+    .confirmation-msg {
+      margin-top: 1rem;
+      padding: 0.7rem;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      color: #fff;
+      background-color: var(--uff-blue);
+    }
+
     .footer {
       text-align: center;
       font-size: 0.75rem;
@@ -191,6 +201,7 @@
       <input type="text" name="palavra_chave" required>
 
       <button type="submit" id="submitBtn" disabled>Registrar presença</button>
+      <div id="confirmationMsg" class="confirmation-msg" style="display:none;"></div>
 
       <div class="footer">
         Universidade Federal Fluminense
@@ -204,6 +215,7 @@
     const emailWarning = document.getElementById('emailWarning');
     const emailCheck = document.getElementById('emailCheck');
     const submitBtn = document.getElementById('submitBtn');
+    const confirmationMsg = document.getElementById('confirmationMsg');
 
     const selects = form.querySelectorAll('select');
     const palavraChave = form.querySelector('[name="palavra_chave"]');
@@ -247,23 +259,28 @@
 
       const data = Object.fromEntries(new FormData(form).entries());
 
-      const response = await fetch(
-        'https://bmbarcellos.app.n8n.cloud/webhook/registro-presenca',
-        {
+      try {
+        const response = await fetch('https://bmbarcellos.app.n8n.cloud/webhook/registro-presenca', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
-        }
-      );
+        });
 
-      if (response.ok) {
-        alert('Presença registrada com sucesso!');
-        form.reset();
-        submitBtn.disabled = true;
-        emailInput.classList.remove('success', 'error');
-        emailCheck.classList.remove('visible');
-      } else {
-        alert('Erro ao registrar presença.');
+        if (response.ok) {
+          confirmationMsg.textContent = '✅ Presença registrada com sucesso!';
+          confirmationMsg.style.display = 'block';
+          form.reset();
+          submitBtn.disabled = true;
+          emailInput.classList.remove('success', 'error');
+          emailCheck.classList.remove('visible');
+        } else {
+          const text = await response.text();
+          confirmationMsg.textContent = '❌ Erro ao registrar presença: ' + text;
+          confirmationMsg.style.display = 'block';
+        }
+      } catch (err) {
+        confirmationMsg.textContent = '❌ Erro ao conectar ao servidor: ' + err.message;
+        confirmationMsg.style.display = 'block';
       }
     });
   </script>
