@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Presença</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+
+    .form-card {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.15);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.3rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 0.8rem;
+      background: #4f46e5;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4338ca;
+    }
+  </style>
+</head>
+
+<body>
+  <form class="form-card" id="presencaForm">
+    <h1>Registro de presença</h1>
+
+    <label>Email institucional</label>
+    <input type="email" name="email_institucional" required>
+
+    <label>Disciplina</label>
+    <select name="disciplina" required>
+      <option value="">Selecione</option>
+      <option>MIAI III</option>
+      <option>MICA III</option>
+      <option>TCS IV-A</option>
+      <option>PGS</option>
+    </select>
+
+    <label>Módulo</label>
+    <select name="modulo" required>
+      <option>Anestesiologia</option>
+      <option>Dermatologia</option>
+      <option>Farmacologia</option>
+      <option>Gastroenterologia</option>
+      <option>Geriatria</option>
+      <option>Imunologia</option>
+      <option>Nefrologia</option>
+      <option>Neurologia</option>
+      <option>Urologia</option>
+      <option>Não se aplica</option>
+    </select>
+
+    <label>Horário da aula</label>
+    <select name="horario_aula" required>
+      <option>07:30h às 09:00h</option>
+      <option>09:00h às 10:30h</option>
+      <option>10:45h às 12:15h</option>
+    </select>
+
+    <label>Palavra-chave</label>
+    <input type="text" name="palavra_chave" required>
+
+    <button type="submit">Registrar presença</button>
+  </form>
+
+  <script>
+    document.getElementById('presencaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = Object.fromEntries(
+        new FormData(e.target).entries()
+      );
+
+      const response = await fetch(
+        'https://bmbarcellos.app.n8n.cloud/webhook/registro-presenca',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        }
+      );
+
+      if (response.ok) {
+        alert('Presença registrada com sucesso!');
+        e.target.reset();
+      } else {
+        alert('Erro ao registrar presença.');
+      }
+    });
+  </script>
+</body>
+</html>
+
