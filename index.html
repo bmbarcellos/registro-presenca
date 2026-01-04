@@ -219,7 +219,11 @@
       );
     }
 
-  <script>
+
+<script>
+  // ===============================
+  // Validação visual do email (INALTERADO)
+  // ===============================
   const emailInput = document.getElementById('email');
   const emailAviso = document.getElementById('emailAviso');
 
@@ -239,36 +243,51 @@
     }
   });
 
-  // --- Geolocalização com controle de envio ---
+  // ===============================
+  // Geolocalização COM CONTROLE DE SUBMIT
+  // ===============================
   const form = document.querySelector('form');
+  let envioLiberado = false; // trava de segurança
 
   form.addEventListener('submit', function (e) {
-    e.preventDefault(); // ⛔ impede envio imediato
 
+    // Se já passou pela geolocalização, deixa enviar normalmente
+    if (envioLiberado) return;
+
+    // Bloqueia o envio inicial
+    e.preventDefault();
+
+    // Verifica suporte
     if (!navigator.geolocation) {
-      alert("Seu navegador não suporta geolocalização.");
-      form.submit(); // envia mesmo assim
+      alert("Seu navegador não suporta geolocalização. A presença será registrada sem validação física.");
+      envioLiberado = true;
+      form.submit();
       return;
     }
 
+    // Solicita localização
     navigator.geolocation.getCurrentPosition(
       function (position) {
         document.getElementById('lat').value = position.coords.latitude;
         document.getElementById('lng').value = position.coords.longitude;
 
-        // ✅ Agora sim envia o formulário
-        form.submit();
+        envioLiberado = true;
+        form.submit(); // agora envia
       },
       function (error) {
         alert("Não foi possível obter sua localização. A presença será registrada sem validação física.");
-        form.submit(); // envia mesmo sem localização
+        envioLiberado = true;
+        form.submit(); // envia mesmo sem GPS
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
+      }
     );
   });
 </script>
 
-  </script>
 
 </body>
 </html>
