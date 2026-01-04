@@ -15,7 +15,7 @@
 
     .container {
       max-width: 420px;
-      margin: 40px auto;
+      margin: 40px auto 10px;
       background: #fff;
       padding: 25px;
       border-radius: 8px;
@@ -91,13 +91,22 @@
     button:hover {
       background-color: #002e70;
     }
+
+    /* Rodapé institucional */
+    .footer {
+      max-width: 420px;
+      margin: 0 auto 20px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #666;
+    }
   </style>
 </head>
 
 <body>
 
   <div class="container">
-    <!-- Logo UFF centralizado -->
+    <!-- Logo UFF -->
     <img
       src="https://www.extensao.uff.br/images/uff-logo-4.png"
       alt="Universidade Federal Fluminense"
@@ -161,6 +170,12 @@
     </form>
   </div>
 
+  <!-- Rodapé institucional -->
+  <div class="footer">
+    Universidade Federal Fluminense — UFF<br>
+    Sistema de Registro de Presença Acadêmica
+  </div>
+
   <script>
     const emailInput = document.getElementById('email');
     const emailAviso = document.getElementById('emailAviso');
@@ -184,3 +199,4 @@
 
 </body>
 </html>
+
