@@ -219,10 +219,55 @@
       );
     }
 
-    const form = document.querySelector('form');
-    form.addEventListener('submit', (e) => {
-      solicitarLocalizacao();
-    });
+  <script>
+  const emailInput = document.getElementById('email');
+  const emailAviso = document.getElementById('emailAviso');
+
+  emailInput.addEventListener('input', () => {
+    const valor = emailInput.value.trim();
+
+    emailInput.classList.remove('email-ok', 'email-warn');
+    emailAviso.style.display = 'none';
+
+    if (!valor) return;
+
+    if (valor.endsWith('@id.uff.br')) {
+      emailInput.classList.add('email-ok');
+    } else {
+      emailInput.classList.add('email-warn');
+      emailAviso.style.display = 'block';
+    }
+  });
+
+  // --- Geolocalização com controle de envio ---
+  const form = document.querySelector('form');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault(); // ⛔ impede envio imediato
+
+    if (!navigator.geolocation) {
+      alert("Seu navegador não suporta geolocalização.");
+      form.submit(); // envia mesmo assim
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        document.getElementById('lat').value = position.coords.latitude;
+        document.getElementById('lng').value = position.coords.longitude;
+
+        // ✅ Agora sim envia o formulário
+        form.submit();
+      },
+      function (error) {
+        alert("Não foi possível obter sua localização. A presença será registrada sem validação física.");
+        form.submit(); // envia mesmo sem localização
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+</script>
+
   </script>
 
 </body>
