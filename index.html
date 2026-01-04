@@ -181,48 +181,8 @@
   </div>
 
   <script>
-    const emailInput = document.getElementById('email');
-    const emailAviso = document.getElementById('emailAviso');
-
-    emailInput.addEventListener('input', () => {
-      const valor = emailInput.value.trim();
-
-      emailInput.classList.remove('email-ok', 'email-warn');
-      emailAviso.style.display = 'none';
-
-      if (!valor) return;
-
-      if (valor.endsWith('@id.uff.br')) {
-        emailInput.classList.add('email-ok');
-      } else {
-        emailInput.classList.add('email-warn');
-        emailAviso.style.display = 'block';
-      }
-    });
-
-    // --- Solicitação de geolocalização antes do envio ---
-    function solicitarLocalizacao() {
-      if (!navigator.geolocation) {
-        alert("Seu navegador não suporta geolocalização. Presença não poderá ser validada fisicamente.");
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        function(position) {
-          document.getElementById('lat').value = position.coords.latitude;
-          document.getElementById('lng').value = position.coords.longitude;
-        },
-        function(error) {
-          alert("Não foi possível obter sua localização. Permita o acesso à localização para validar a presença física.");
-        },
-        { enableHighAccuracy: true }
-      );
-    }
-
-
-<script>
   // ===============================
-  // Validação visual do email (INALTERADO)
+  // Validação visual do email
   // ===============================
   const emailInput = document.getElementById('email');
   const emailAviso = document.getElementById('emailAviso');
@@ -244,20 +204,19 @@
   });
 
   // ===============================
-  // Geolocalização COM CONTROLE DE SUBMIT
+  // Geolocalização COM CONTROLE TOTAL DO SUBMIT
   // ===============================
   const form = document.querySelector('form');
-  let envioLiberado = false; // trava de segurança
+  let envioLiberado = false;
 
   form.addEventListener('submit', function (e) {
 
-    // Se já passou pela geolocalização, deixa enviar normalmente
+    // Se já passou pela geolocalização, envia normalmente
     if (envioLiberado) return;
 
-    // Bloqueia o envio inicial
+    // Impede envio imediato
     e.preventDefault();
 
-    // Verifica suporte
     if (!navigator.geolocation) {
       alert("Seu navegador não suporta geolocalização. A presença será registrada sem validação física.");
       envioLiberado = true;
@@ -265,19 +224,18 @@
       return;
     }
 
-    // Solicita localização
     navigator.geolocation.getCurrentPosition(
       function (position) {
         document.getElementById('lat').value = position.coords.latitude;
         document.getElementById('lng').value = position.coords.longitude;
 
         envioLiberado = true;
-        form.submit(); // agora envia
+        form.submit();
       },
-      function (error) {
+      function () {
         alert("Não foi possível obter sua localização. A presença será registrada sem validação física.");
         envioLiberado = true;
-        form.submit(); // envia mesmo sem GPS
+        form.submit();
       },
       {
         enableHighAccuracy: true,
