@@ -204,34 +204,6 @@
   });
 
   // ===============================
-  // Geolocalização COM CONTROLE TOTAL DO SUBMIT
-  // ===============================
-  const form = document.querySelector('form');
-  let envioLiberado = false;
-
-  <script>
-  // ===============================
-  // Validação visual do email (igual)
-  // ===============================
-  const emailInput = document.getElementById('email');
-  const emailAviso = document.getElementById('emailAviso');
-
-  emailInput.addEventListener('input', () => {
-    const valor = emailInput.value.trim();
-    emailInput.classList.remove('email-ok', 'email-warn');
-    emailAviso.style.display = 'none';
-
-    if (!valor) return;
-
-    if (valor.endsWith('@id.uff.br')) {
-      emailInput.classList.add('email-ok');
-    } else {
-      emailInput.classList.add('email-warn');
-      emailAviso.style.display = 'block';
-    }
-  });
-
-  // ===============================
   // Geolocalização MOBILE-SAFE
   // ===============================
   const form = document.querySelector('form');
@@ -242,7 +214,7 @@
 
     if (envioLiberado) return;
 
-    e.preventDefault(); // bloqueia envio
+    e.preventDefault(); // impede envio imediato
 
     botao.disabled = true;
     botao.innerText = "Obtendo localização...";
@@ -273,6 +245,7 @@
     );
   });
 </script>
+
 
 </body>
 </html>
