@@ -209,16 +209,45 @@
   const form = document.querySelector('form');
   let envioLiberado = false;
 
-  form.addEventListener('submit', function (e) {
+  <script>
+  // ===============================
+  // Validação visual do email (igual)
+  // ===============================
+  const emailInput = document.getElementById('email');
+  const emailAviso = document.getElementById('emailAviso');
 
-    // Se já passou pela geolocalização, envia normalmente
+  emailInput.addEventListener('input', () => {
+    const valor = emailInput.value.trim();
+    emailInput.classList.remove('email-ok', 'email-warn');
+    emailAviso.style.display = 'none';
+
+    if (!valor) return;
+
+    if (valor.endsWith('@id.uff.br')) {
+      emailInput.classList.add('email-ok');
+    } else {
+      emailInput.classList.add('email-warn');
+      emailAviso.style.display = 'block';
+    }
+  });
+
+  // ===============================
+  // Geolocalização MOBILE-SAFE
+  // ===============================
+  const form = document.querySelector('form');
+  const botao = form.querySelector('button[type="submit"]');
+  let envioLiberado = false;
+
+  botao.addEventListener('click', function (e) {
+
     if (envioLiberado) return;
 
-    // Impede envio imediato
-    e.preventDefault();
+    e.preventDefault(); // bloqueia envio
+
+    botao.disabled = true;
+    botao.innerText = "Obtendo localização...";
 
     if (!navigator.geolocation) {
-      alert("Seu navegador não suporta geolocalização. A presença será registrada sem validação física.");
       envioLiberado = true;
       form.submit();
       return;
@@ -233,19 +262,17 @@
         form.submit();
       },
       function () {
-        alert("Não foi possível obter sua localização. A presença será registrada sem validação física.");
         envioLiberado = true;
         form.submit();
       },
       {
         enableHighAccuracy: true,
-        timeout: 15000,
+        timeout: 20000,
         maximumAge: 0
       }
     );
   });
 </script>
-
 
 </body>
 </html>
