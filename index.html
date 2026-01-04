@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -60,7 +60,6 @@
       box-sizing: border-box;
     }
 
-    /* Validação visual do email */
     .email-ok {
       border: 1px solid #2e7d32 !important;
     }
@@ -92,7 +91,6 @@
       background-color: #002e70;
     }
 
-    /* Rodapé institucional */
     .footer {
       max-width: 420px;
       margin: 0 auto 20px;
@@ -106,7 +104,6 @@
 <body>
 
   <div class="container">
-    <!-- Logo UFF -->
     <img
       src="https://www.extensao.uff.br/images/uff-logo-4.png"
       alt="Universidade Federal Fluminense"
@@ -116,7 +113,6 @@
     <h1>Registro de Presença</h1>
     <p>Preencha os dados para registrar sua participação na aula.</p>
 
-    <!-- NÃO ALTERAR action ou method -->
     <form method="POST" action="https://bmbarcellos.app.n8n.cloud/webhook/registro-presenca">
 
       <label>Email institucional</label>
@@ -165,7 +161,7 @@
       <label>Palavra-chave</label>
       <input type="text" name="palavra_chave" required>
 
-      <!-- Campos ocultos para geolocalização -->
+      <!-- Geolocalização -->
       <input type="hidden" name="lat" id="lat">
       <input type="hidden" name="lng" id="lng">
 
@@ -174,78 +170,73 @@
     </form>
   </div>
 
-  <!-- Rodapé institucional -->
   <div class="footer">
     Universidade Federal Fluminense — UFF<br>
     Sistema de Registro de Presença Acadêmica
   </div>
 
   <script>
-  // ===============================
-  // Validação visual do email
-  // ===============================
-  const emailInput = document.getElementById('email');
-  const emailAviso = document.getElementById('emailAviso');
+    // ===============================
+    // Validação visual do email
+    // ===============================
+    const emailInput = document.getElementById('email');
+    const emailAviso = document.getElementById('emailAviso');
 
-  emailInput.addEventListener('input', () => {
-    const valor = emailInput.value.trim();
+    emailInput.addEventListener('input', () => {
+      const valor = emailInput.value.trim();
+      emailInput.classList.remove('email-ok', 'email-warn');
+      emailAviso.style.display = 'none';
 
-    emailInput.classList.remove('email-ok', 'email-warn');
-    emailAviso.style.display = 'none';
+      if (!valor) return;
 
-    if (!valor) return;
-
-    if (valor.endsWith('@id.uff.br')) {
-      emailInput.classList.add('email-ok');
-    } else {
-      emailInput.classList.add('email-warn');
-      emailAviso.style.display = 'block';
-    }
-  });
-
-  // ===============================
-  // Geolocalização MOBILE-SAFE
-  // ===============================
-  const form = document.querySelector('form');
-  const botao = form.querySelector('button[type="submit"]');
-  let envioLiberado = false;
-
-  botao.addEventListener('click', function (e) {
-
-    if (envioLiberado) return;
-
-    e.preventDefault(); // impede envio imediato
-
-    botao.disabled = true;
-    botao.innerText = "Obtendo localização...";
-
-    if (!navigator.geolocation) {
-      envioLiberado = true;
-      form.submit();
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        document.getElementById('lat').value = position.coords.latitude;
-        document.getElementById('lng').value = position.coords.longitude;
-
-        envioLiberado = true;
-        form.submit();
-      },
-      function () {
-        envioLiberado = true;
-        form.submit();
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 0
+      if (valor.endsWith('@id.uff.br')) {
+        emailInput.classList.add('email-ok');
+      } else {
+        emailInput.classList.add('email-warn');
+        emailAviso.style.display = 'block';
       }
-    );
-  });
-</script>
+    });
 
+    // ===============================
+    // Geolocalização MOBILE-SAFE
+    // ===============================
+    const form = document.querySelector('form');
+    const botao = form.querySelector('button[type="submit"]');
+    let envioLiberado = false;
+
+    botao.addEventListener('click', function (e) {
+
+      if (envioLiberado) return;
+
+      e.preventDefault();
+      botao.disabled = true;
+      botao.innerText = "Obtendo localização...";
+
+      if (!navigator.geolocation) {
+        envioLiberado = true;
+        form.submit();
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          document.getElementById('lat').value = position.coords.latitude;
+          document.getElementById('lng').value = position.coords.longitude;
+          envioLiberado = true;
+          form.submit();
+        },
+        function () {
+          envioLiberado = true;
+          form.submit();
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0
+        }
+      );
+    });
+  </script>
 
 </body>
 </html>
