@@ -75,6 +75,13 @@
       display: none;
     }
 
+    .alerta {
+      color: #f00;
+      font-size: 0.85rem;
+      margin-top: 4px;
+      display: none;
+    }
+
     button {
       margin-top: 20px;
       width: 100%;
@@ -98,11 +105,14 @@
       font-size: 0.75rem;
       color: #666;
     }
+
+    .campo-invalido {
+      border-color: #f00 !important;
+    }
   </style>
 </head>
 
 <body>
-
   <div class="container">
     <img
       src="https://www.extensao.uff.br/images/uff-logo-4.png"
@@ -113,47 +123,42 @@
     <h1>Registro de Presença</h1>
     <p>Preencha os dados para registrar sua participação na aula.</p>
 
-    <form method="POST" action="https://bmbarcellos.app.n8n.cloud/webhook/registro-presenca">
+    <form id="presencaForm" method="POST" action="https://bmbarcellos.app.n8n.cloud/webhook/registro-presenca">
 
       <label>Email institucional</label>
-      <input
-        type="email"
-        id="email"
-        name="email_institucional"
-        placeholder="exemplo@id.uff.br"
-        required
-      >
+      <input type="email" id="email" name="email_institucional" placeholder="exemplo@id.uff.br" required>
       <div id="emailAviso" class="email-aviso">
         Atenção: utilize obrigatoriamente o email institucional (@id.uff.br)
       </div>
 
       <label>Disciplina</label>
-      <select id="disciplina" name="disciplina" required>
-        <option value="">Selecione a disciplina</option>
-        <option value="MIAI III-A">MIAI III-A</option>
-        <option value="MICA III-A">MICA III-A</option>
-        <option value="PGS III-A">PGS III-A</option>
-        <option value="Racionalidades médicas e medicina integrativa">Racionalidades médicas e medicina integrativa</option>
-        <option value="TCS IV-A-A">TCS IV-A-A</option>
+      <select name="disciplina" id="disciplina" required>
+        <option value="">Selecione</option>
+        <option>MIAI III-A</option>
+        <option>MICA III-A</option>
+        <option>PGS III-A</option>
+        <option>Racionalidades médicas e medicina integrativa</option>
+        <option>TCS IV-A-A</option>
       </select>
 
       <label>Módulo</label>
-      <select id="modulo" name="modulo" required>
-        <option value="">Selecione o módulo</option>
+      <select name="modulo" id="modulo" required>
+        <option value="">Selecione</option>
       </select>
 
       <label>Horário da aula</label>
-      <select name="horario_aula" required>
-        <option value="">Selecione o horário</option>
+      <select name="horario_aula" id="horario_aula" required>
+        <option value="">Selecione</option>
         <option>07:30h às 09:00h</option>
         <option>09:00h às 10:30h</option>
         <option>10:45h às 12:15h</option>
         <option>13:45h às 15:45h</option>
         <option>16:00h às 18:00h</option>
       </select>
+      <div id="horarioAviso" class="alerta">Horário incompatível com a disciplina selecionada!</div>
 
       <label>Palavra-chave</label>
-      <input type="text" name="palavra_chave" required>
+      <input type="text" name="palavra_chave" id="palavra_chave" required>
 
       <!-- Geolocalização -->
       <input type="hidden" name="lat" id="lat">
@@ -194,14 +199,58 @@
     // ===============================
     // Geolocalização MOBILE-SAFE
     // ===============================
-    const form = document.querySelector('form');
+    const form = document.getElementById('presencaForm');
     const botao = form.querySelector('button[type="submit"]');
     let envioLiberado = false;
 
     botao.addEventListener('click', function (e) {
-      if (envioLiberado) return;
-
       e.preventDefault();
+
+      // Limpar alertas anteriores
+      document.querySelectorAll('.alerta').forEach(a => a.style.display = 'none');
+      document.querySelectorAll('.campo-invalido').forEach(c => c.classList.remove('campo-invalido'));
+
+      // Validação de campos obrigatórios
+      let valido = true;
+      form.querySelectorAll('input[required], select[required]').forEach(field => {
+        if (!field.value) {
+          field.classList.add('campo-invalido');
+          valido = false;
+        }
+      });
+
+      if (!valido) {
+        alert("Todos os campos obrigatórios devem ser preenchidos!");
+        return;
+      }
+
+      // Validação de horário compatível
+      const disciplina = document.getElementById('disciplina').value;
+      const horario = document.getElementById('horario_aula').value;
+      const horariosManha = ["07:30h às 09:00h", "09:00h às 10:30h", "10:45h às 12:15h"];
+      const horariosTarde = ["13:45h às 15:45h", "16:00h às 18:00h"];
+      let horarioValido = true;
+
+      if ((disciplina === "MIAI III-A" || disciplina === "MICA III-A") && !horariosManha.includes(horario)) {
+        horarioValido = false;
+      }
+      if ((disciplina === "PGS III-A" || disciplina === "Racionalidades médicas e medicina integrativa") && !horariosTarde.includes(horario)) {
+        horarioValido = false;
+      }
+
+      if (!horarioValido) {
+        document.getElementById('horarioAviso').style.display = 'block';
+        document.getElementById('horario_aula').classList.add('campo-invalido');
+        alert("Horário selecionado não é compatível com a disciplina!");
+        return;
+      }
+
+      // Geolocalização
+      if (envioLiberado) {
+        form.submit();
+        return;
+      }
+
       botao.disabled = true;
       botao.innerText = "Obtendo localização...";
 
@@ -222,52 +271,53 @@
           envioLiberado = true;
           form.submit();
         },
-        {
-          enableHighAccuracy: true,
-          timeout: 20000,
-          maximumAge: 0
-        }
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
       );
     });
 
     // ===============================
-    // Filtragem dinâmica de módulos por disciplina
+    // Módulos dependentes da disciplina
     // ===============================
     const disciplinaSelect = document.getElementById('disciplina');
     const moduloSelect = document.getElementById('modulo');
 
     const modulosPorDisciplina = {
-      "MIAI III-A": [
-        "Anestesiologia","Dermatologia","Equilíbrio hidroeletrolítico","Farmacologia",
-        "Gastroenterologia","Geriatria","Imunologia","Nefrologia","Neurologia",
-        "Pneumologia","Urologia"
-      ],
-      "MICA III-A": [
-        "Ginecologia","Obstetrícia","Neonatologia","Psiquiatria infantil"
-      ],
-      "TCS IV-A-A": [
-        "Anestesiologia","Cirurgia geral","Cirurgia plástica","Cirurgia torácica",
-        "Oftalmologia","Otorrinolaringologia","Neurocirurgia"
-      ],
+      "MIAI III-A": ["Anestesiologia", "Dermatologia", "Equilíbrio hidroeletrolítico", "Farmacologia", "Gastroenterologia", "Geriatria", "Imunologia", "Nefrologia", "Neurologia", "Pneumologia", "Urologia"].sort(),
+      "MICA III-A": ["Ginecologia", "Neonatologia", "Obstetrícia", "Psiquiatria infantil"].sort(),
+      "TCS IV-A-A": ["Anestesiologia", "Cirurgia geral", "Cirurgia plástica", "Cirurgia torácica", "Neurocirurgia", "Oftalmologia", "Otorrinolaringologia"].sort(),
       "PGS III-A": ["Não se aplica"],
       "Racionalidades médicas e medicina integrativa": ["Não se aplica"]
     };
 
-    disciplinaSelect.addEventListener('change', () => {
+    disciplinaSelect.addEventListener('change', function() {
       const disciplina = disciplinaSelect.value;
-      moduloSelect.innerHTML = '<option value="">Selecione o módulo</option>';
 
-      if (!modulosPorDisciplina[disciplina]) return;
+      // Atualiza módulos
+      moduloSelect.innerHTML = '<option value="">Selecione</option>';
+      if (modulosPorDisciplina[disciplina]) {
+        modulosPorDisciplina[disciplina].forEach(mod => {
+          const opt = document.createElement('option');
+          opt.value = mod;
+          opt.textContent = mod;
+          moduloSelect.appendChild(opt);
+        });
+      }
 
-      modulosPorDisciplina[disciplina].forEach(modulo => {
-        const option = document.createElement('option');
-        option.value = modulo;
-        option.textContent = modulo;
-        moduloSelect.appendChild(option);
-      });
+      // Atualiza horários automaticamente
+      const horarioSelect = document.getElementById('horario_aula');
+      const horariosManha = ["07:30h às 09:00h", "09:00h às 10:30h", "10:45h às 12:15h"];
+      const horariosTarde = ["13:45h às 15:45h", "16:00h às 18:00h"];
+      const horariosTodos = horariosManha.concat(horariosTarde);
+
+      horarioSelect.innerHTML = '<option value="">Selecione</option>';
+      if (disciplina === "MIAI III-A" || disciplina === "MICA III-A") {
+        horariosManha.forEach(h => horarioSelect.appendChild(new Option(h, h)));
+      } else if (disciplina === "PGS III-A" || disciplina === "Racionalidades médicas e medicina integrativa") {
+        horariosTarde.forEach(h => horarioSelect.appendChild(new Option(h, h)));
+      } else {
+        horariosTodos.forEach(h => horarioSelect.appendChild(new Option(h, h)));
+      }
     });
-
   </script>
-
 </body>
 </html>
