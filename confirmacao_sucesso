@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Presença Confirmada</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #003A8F, #0059b3);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: #ffffff;
+      max-width: 420px;
+      width: 90%;
+      border-radius: 14px;
+      padding: 35px 30px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      max-width: 220px;
+      margin-bottom: 20px;
+    }
+
+    .check {
+      font-size: 60px;
+      color: #0a7d3b;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #003A8F;
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #555;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .footer {
+      margin-top: 25px;
+      font-size: 0.75rem;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <img
+      src="https://www.extensao.uff.br/images/uff-logo-4.png"
+      alt="Universidade Federal Fluminense"
+      class="logo"
+    >
+
+    <div class="check">✔️</div>
+
+    <h1>Sua presença foi confirmada com sucesso!</h1>
+
+    <p>
+      O registro da sua participação foi recebido corretamente
+      pelo sistema acadêmico.
+    </p>
+
+    <div class="footer">
+      Universidade Federal Fluminense<br>
+      Sistema de Registro de Presença
+    </div>
+  </div>
+</body>
+</html>
