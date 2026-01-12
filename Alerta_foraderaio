@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Alerta | UFF</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --uff-azul: #003366;
+      --uff-azul-claro: #005fa3;
+      --uff-branco: #ffffff;
+      --uff-cinza: #f4f6f8;
+      --uff-verde: #2ecc71;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, var(--uff-azul), var(--uff-azul-claro));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--uff-branco);
+      padding: 36px 32px;
+      border-radius: 18px;
+      max-width: 440px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.6s ease;
+    }
+
+    .icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: var(--uff-verde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      color: white;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 0 0 12px;
+      color: var(--uff-azul);
+    }
+
+    p {
+      font-size: 16px;
+      color: #444;
+      margin: 0;
+    }
+
+    .footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .uff {
+      font-weight: 600;
+      color: var(--uff-azul);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <div class="icon">!</div>
+
+    <h1>Alerta!</h1>
+
+    <p>
+      Presença não validada fisicamente.
+    </p>
+
+    <div class="footer">
+      <span class="uff">Universidade Federal Fluminense</span>
+    </div>
+  </main>
+</body>
+</html>
