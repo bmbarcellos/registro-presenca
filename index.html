@@ -163,7 +163,8 @@
       <!-- Geolocalização -->
       <input type="hidden" name="lat" id="lat">
       <input type="hidden" name="lng" id="lng">
-
+      <input type="hidden" name="accuracy" id="accuracy">
+      
       <button type="submit">Registrar presença</button>
 
     </form>
@@ -264,6 +265,7 @@
         function (position) {
           document.getElementById('lat').value = position.coords.latitude;
           document.getElementById('lng').value = position.coords.longitude;
+          document.getElementById('accuracy').value = position.coords.accuracy;
           envioLiberado = true;
           form.submit();
         },
