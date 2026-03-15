@@ -188,8 +188,9 @@
       <input type="hidden" name="lng" id="lng">
       <input type="hidden" name="accuracy" id="accuracy">
 
-      <!-- Token de sessão anti-fraude -->
+      <!-- Token de sessão e fingerprint anti-fraude -->
       <input type="hidden" name="token_sessao" id="token_sessao">
+      <input type="hidden" name="device_hash" id="device_hash">
 
       <div id="tokenStatus" class="token-status token-loading">
         ⏳ Iniciando sessão segura...
@@ -207,6 +208,29 @@
 
   <script>
     // ===============================
+    // FINGERPRINT DO DISPOSITIVO (SHA-256)
+    // ===============================
+    async function gerarDeviceHash() {
+      const dados = [
+        navigator.userAgent,
+        navigator.language,
+        navigator.platform,
+        screen.width + 'x' + screen.height,
+        screen.colorDepth,
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+        navigator.hardwareConcurrency || 'unknown',
+        navigator.maxTouchPoints || 0,
+        new Date().getTimezoneOffset()
+      ].join('|');
+
+      const encoder = new TextEncoder();
+      const data = encoder.encode(dados);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // ===============================
     // Token de sessão anti-fraude
     // ===============================
     let tokenObtido = false;
@@ -220,7 +244,16 @@
         statusEl.className = 'token-status token-loading';
         statusEl.textContent = '⏳ Iniciando sessão segura...';
 
-        const res = await fetch('https://webhook.artideia.com.br/webhook/iniciar-sessao');
+        // Gera fingerprint do dispositivo
+        const deviceHash = await gerarDeviceHash();
+        document.getElementById('device_hash').value = deviceHash;
+
+        // Envia o device_hash junto ao pedido de token via POST
+        const res = await fetch('https://webhook.artideia.com.br/webhook/iniciar-sessao', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ device_hash: deviceHash })
+        });
         if (!res.ok) throw new Error('Falha ao obter sessão');
 
         const data = await res.json();
