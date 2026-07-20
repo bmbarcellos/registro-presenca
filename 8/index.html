@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Presença — 8º Período</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../styles.css">
+  <script>
+    window.PERIODO_CONFIG = {
+      periodoLabel: "8º Período",
+      periodoValor: "8",
+      webhookRegistro: "https://webhook.artideia.com.br/webhook/registro-presenca",
+      webhookSessao:  "https://webhook.artideia.com.br/webhook/iniciar-sessao",
+      versao: "1.5.001",
+      horariosManha: ["07:30h às 09:00h", "09:00h às 10:30h", "10:45h às 12:15h"],
+      horariosTarde: ["13:45h às 15:45h", "16:00h às 18:00h"],
+      modulosPorDisciplina: {
+        "Epidemiologia": ["Não se aplica"],
+        "MIAI IV-A": ["Cardiologia","DIP","Endocrinologia","Etica","Farmacologia","Medicina legal","Oncologia","Pneumologia","Psiquiatria","Reumatologia","Toxicologia"],
+        "MICA IV-A": ["Pediatria"],
+        "TCS IV-B-A": ["Não se aplica"]
+      },
+      turnoPorDisciplina: {
+        "Epidemiologia": "todos",
+        "MIAI IV-A": "manha",
+        "MICA IV-A": "manha",
+        "TCS IV-B-A": "manha"
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="container">
+    <img src="https://www.extensao.uff.br/images/uff-logo-4.png" alt="Universidade Federal Fluminense" class="logo">
+    <h1>Registro de Presença</h1>
+    <div class="periodo-badge" id="periodoLabel"></div>
+    <p>Preencha os dados para registrar sua participação na aula.</p>
+    <form id="presencaForm" method="POST" action="#">
+      <input type="hidden" name="periodo" id="periodoInput">
+      <label>Email institucional</label>
+      <input type="email" id="email" name="email_institucional" placeholder="exemplo@id.uff.br" required>
+      <div id="emailAviso" class="email-aviso">Atenção: utilize obrigatoriamente o email institucional (@id.uff.br)</div>
+      <label>Disciplina</label>
+      <select name="disciplina" id="disciplina" required><option value="">Selecione</option></select>
+      <label>Módulo</label>
+      <select name="modulo" id="modulo" required><option value="">Selecione</option></select>
+      <label>Horário da aula</label>
+      <select name="horario_aula" id="horario_aula" required><option value="">Selecione</option></select>
+      <div id="horarioAviso" class="alerta">Horário incompatível com a disciplina selecionada!</div>
+      <label>Palavra-chave</label>
+      <input type="text" name="palavra_chave" id="palavra_chave" required>
+      <input type="hidden" name="lat" id="lat">
+      <input type="hidden" name="lng" id="lng">
+      <input type="hidden" name="accuracy" id="accuracy">
+      <input type="hidden" name="token_sessao" id="token_sessao">
+      <input type="hidden" name="device_hash" id="device_hash">
+      <div id="tokenStatus" class="token-status token-loading">⏳ Iniciando sessão segura...</div>
+      <button type="submit">Registrar presença</button>
+    </form>
+    <form id="acaoForm" style="display:none"></form>
+  </div>
+  <div class="footer">
+    Universidade Federal Fluminense — UFF<br>
+    Sistema Eletrônico de Registro de Presença<br>
+    <span id="versaoLabel" style="font-size:0.65rem;"></span>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      document.getElementById('presencaForm').setAttribute('action', window.PERIODO_CONFIG.webhookRegistro);
+    });
+  </script>
+  <script src="../shared.js"></script>
+</body>
+</html>
