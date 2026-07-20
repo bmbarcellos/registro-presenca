@@ -1,0 +1,22 @@
+body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 0; }
+.container { max-width: 420px; margin: 40px auto 10px; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
+.logo { max-width: 220px; margin-bottom: 15px; }
+h1 { color: #003A8F; margin-bottom: 5px; }
+.periodo-badge { display:inline-block; margin: 6px 0 2px; padding: 4px 10px; background:#003A8F; color:#fff; border-radius:12px; font-size:0.8rem; font-weight:bold; letter-spacing:0.3px; }
+p { color: #555; font-size: 0.95rem; margin-top: 0; }
+form { text-align: left; margin-top: 20px; }
+label { display: block; margin-top: 15px; font-weight: bold; }
+input, select { width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 0.95rem; box-sizing: border-box; }
+.email-ok { border: 1px solid #2e7d32 !important; }
+.email-warn { border: 1px solid #f57c00 !important; }
+.email-aviso { font-size: 0.8rem; color: #f57c00; margin-top: 4px; display: none; }
+.alerta { color: #f00; font-size: 0.85rem; margin-top: 4px; display: none; }
+button { margin-top: 20px; width: 100%; padding: 10px; background-color: #003A8F; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
+button:hover { background-color: #002e70; }
+button:disabled { background-color: #7a8ba8; cursor: not-allowed; }
+.footer { max-width: 420px; margin: 0 auto 20px; text-align: center; font-size: 0.75rem; color: #666; }
+.campo-invalido { border-color: #f00 !important; }
+.token-status { font-size: 0.75rem; margin-top: 8px; padding: 6px 10px; border-radius: 4px; text-align: center; }
+.token-ok { background-color: #e8f5e9; color: #2e7d32; }
+.token-erro { background-color: #fbe9e7; color: #c62828; }
+.token-loading { background-color: #fff3e0; color: #e65100; }
