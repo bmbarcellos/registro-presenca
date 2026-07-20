@@ -2,7 +2,7 @@ body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; pad
 .container { max-width: 420px; margin: 40px auto 10px; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
 .logo { max-width: 220px; margin-bottom: 15px; }
 h1 { color: #003A8F; margin-bottom: 5px; }
-.periodo-badge { display:inline-block; margin: 6px 0 2px; padding: 4px 10px; background:#003A8F; color:#fff; border-radius:12px; font-size:0.8rem; font-weight:bold; letter-spacing:0.3px; }
+.periodo-badge { display:block; margin: 8px 0 6px; padding: 0; background:transparent; color:#003A8F; font-size:0.72rem; font-weight:bold; letter-spacing:0.15em; text-transform:uppercase; opacity:0.9; }
 p { color: #555; font-size: 0.95rem; margin-top: 0; }
 form { text-align: left; margin-top: 20px; }
 label { display: block; margin-top: 15px; font-weight: bold; }
