@@ -17,7 +17,46 @@
   const CFG = window.PERIODO_CONFIG;
   if (!CFG) { console.error("PERIODO_CONFIG ausente"); return; }
 
+  // --- Identificador da instalação ---
+  // UUID gerado uma vez por navegador e guardado no localStorage. Diferente do
+  // fingerprint abaixo, ele é único: dois alunos com o mesmo modelo de celular
+  // têm device_id distintos. É o que amarra o token de sessão ao navegador que
+  // o pediu.
+  //
+  // Some se o usuário limpar os dados do navegador, e por isso NÃO substitui o
+  // fingerprint na detecção de duplicidade — só complementa. Perder o id não
+  // causa prejuízo: o aluno apenas recebe uma sessão nova, que dura 5 minutos.
+  const CHAVE_INSTALACAO = 'serp_device_id';
+
+  function obterDeviceId() {
+    try {
+      let id = localStorage.getItem(CHAVE_INSTALACAO);
+      if (!id) {
+        id = (crypto.randomUUID && crypto.randomUUID()) || gerarUuidFallback();
+        localStorage.setItem(CHAVE_INSTALACAO, id);
+      }
+      return id;
+    } catch (e) {
+      // Navegação anônima ou armazenamento bloqueado: segue sem device_id, e a
+      // validação no servidor recai sobre o fingerprint.
+      console.warn('localStorage indisponível; seguindo sem device_id', e);
+      return '';
+    }
+  }
+
+  function gerarUuidFallback() {
+    const b = new Uint8Array(16);
+    crypto.getRandomValues(b);
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    const h = Array.from(b).map(x => x.toString(16).padStart(2, '0')).join('');
+    return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+  }
+
   // --- Fingerprint ---
+  // Hash de características do MODELO do aparelho. Não é único — aparelhos
+  // iguais colidem — e é justamente por isso que resiste à limpeza de dados.
+  // Continua servindo como indício de duplicidade.
   async function gerarDeviceHash() {
     const dados = [
       navigator.userAgent, navigator.language, navigator.platform,
@@ -41,10 +80,17 @@
       statusEl.className = 'token-status token-loading';
       statusEl.textContent = '⏳ Iniciando sessão segura...';
       const deviceHash = await gerarDeviceHash();
+      const deviceId = obterDeviceId();
       document.getElementById('device_hash').value = deviceHash;
+      const campoDeviceId = document.getElementById('device_id');
+      if (campoDeviceId) campoDeviceId.value = deviceId;
       const res = await fetch(CFG.webhookSessao, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ device_hash: deviceHash, periodo: CFG.periodoValor })
+        body: JSON.stringify({
+          device_hash: deviceHash,
+          device_id: deviceId,
+          periodo: CFG.periodoValor
+        })
       });
       if (!res.ok) throw new Error('Falha ao obter sessão');
       const data = await res.json();

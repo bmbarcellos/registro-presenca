@@ -26,5 +26,35 @@ A rota antiga `/qrcode` continua funcionando e aponta para o 7º período (compa
 2. Ajustar `PERIODO_CONFIG` no `index.html`: `periodoLabel`, `periodoValor`, `modulosPorDisciplina`, `turnoPorDisciplina`.
 3. Nenhuma outra alteração necessária.
 
-## Novo campo enviado ao webhook
-Todos os formulários agora enviam também `periodo` (string: "6", "7" ou "8") para permitir roteamento/segmentação no n8n.
+## Campos enviados ao webhook
+
+Além dos campos do formulário, todos os períodos enviam:
+
+| Campo | Origem | Para que serve |
+|---|---|---|
+| `periodo` | `PERIODO_CONFIG.periodoValor` | Roteamento e segmentação no n8n. Formato: `"6º periodo"`, `"7º periodo"`, `"8º periodo"` |
+| `token_sessao` | `/webhook/iniciar-sessao` | Sessão de uso único, válida por 5 minutos |
+| `device_hash` | `gerarDeviceHash()` | Hash de atributos do **modelo** do aparelho |
+| `device_id` | `obterDeviceId()` | UUID por **instalação**, guardado no `localStorage` |
+| `lat`, `lng`, `accuracy` | Geolocalização do navegador | Geofence e avaliação da qualidade do GPS |
+
+### Por que `device_hash` e `device_id` coexistem
+
+Eles resolvem problemas opostos e nenhum substitui o outro.
+
+O **`device_hash`** deriva de características do modelo (user agent, resolução,
+fuso, núcleos). Dois alunos com o mesmo celular produzem o mesmo hash — foi o que
+gerou 71 acusações falsas de duplicidade no semestre passado, 38% do total. Em
+compensação, ele não some quando o usuário limpa os dados do navegador, e por
+isso continua servindo como **indício** de aparelho reaproveitado.
+
+O **`device_id`** é um UUID único por instalação. Serve para **amarrar o token de
+sessão** ao navegador que o solicitou, onde o que importa é unicidade. Mas é
+apagável pelo usuário, então não pode ser a única defesa contra duplicidade.
+
+A regra de duplicidade usa os dois com pesos diferentes: `device_id` igual entre
+alunos distintos na mesma aula é evidência forte e bloqueia; apenas o
+`device_hash` coincidindo é indício fraco e vira observação para o professor.
+
+Em navegação anônima o `localStorage` pode estar bloqueado. Nesse caso o
+`device_id` vai vazio e a validação recai sobre o `device_hash`.
