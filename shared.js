@@ -158,11 +158,52 @@
     });
   }
 
+  // --- Aviso de falha de geolocalização ---
+  // O navegador pode negar a permissão, não conseguir posição ou estourar o
+  // tempo. As três coisas produziam o mesmo resultado invisível: envio sem
+  // coordenada, classificado no servidor como "Fora do raio". O aluno lia que
+  // não estava no local da aula — o que é falso — e ia procurar onde não havia
+  // nada. Aqui cada caso ganha a instrução que resolve.
+  function esconderAvisoGeo() {
+    const el = document.getElementById('geoAviso');
+    if (el) el.style.display = 'none';
+  }
+
+  function mostrarAvisoGeo(err) {
+    const el = document.getElementById('geoAviso');
+    if (!el) { alert('Não foi possível obter sua localização. Verifique a permissão do navegador.'); return; }
+    const codigo = err && err.code;
+    if (codigo === 1) {            // PERMISSION_DENIED
+      el.innerHTML =
+        '<strong>O navegador está bloqueando a localização</strong>' +
+        'Sua presença não pode ser validada sem ela. Uma vez negada, a permissão ' +
+        'não é pedida de novo — é preciso liberá-la nos ajustes:' +
+        '<ol>' +
+        '<li><b>iPhone:</b> Ajustes › Safari › Localização › <b>Perguntar</b></li>' +
+        '<li><b>Android:</b> toque no cadeado ao lado do endereço › Permissões › Localização</li>' +
+        '<li>Recarregue esta página e toque em <b>Permitir</b></li>' +
+        '</ol>';
+    } else if (codigo === 2) {     // POSITION_UNAVAILABLE
+      el.innerHTML =
+        '<strong>Não foi possível determinar sua localização</strong>' +
+        'O aparelho não conseguiu obter a posição. Aproxime-se de uma janela e ' +
+        'toque no botão novamente.';
+    } else {                       // TIMEOUT
+      el.innerHTML =
+        '<strong>A localização demorou demais</strong>' +
+        'O sinal pode estar fraco onde você está. Toque no botão novamente para ' +
+        'tentar mais uma vez.';
+    }
+    el.style.display = 'block';
+    if (el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   // --- Submit + geolocalização ---
   function wireSubmit() {
     const form = document.getElementById('presencaForm');
     const botao = form.querySelector('button[type="submit"]');
     let envioLiberado = false;
+    let geoAvisado = false;
 
     botao.addEventListener('click', function (e) {
       e.preventDefault();
@@ -198,12 +239,27 @@
       if (!navigator.geolocation) { envioLiberado = true; form.submit(); return; }
       navigator.geolocation.getCurrentPosition(
         pos => {
+          esconderAvisoGeo();
           document.getElementById('lat').value = pos.coords.latitude;
           document.getElementById('lng').value = pos.coords.longitude;
           document.getElementById('accuracy').value = pos.coords.accuracy;
           envioLiberado = true; form.submit();
         },
-        () => { envioLiberado = true; form.submit(); },
+        err => {
+          // Primeira falha: explica e devolve o controle, sem enviar.
+          // Segunda: envia mesmo sem coordenada, para que reste registro da
+          // tentativa e o docente possa lançar a presença manualmente. Bloquear
+          // de vez apagaria o rastro de quem estava em aula e não conseguiu.
+          botao.disabled = false;
+          if (!geoAvisado) {
+            geoAvisado = true;
+            botao.innerText = 'Registrar mesmo assim';
+            mostrarAvisoGeo(err);
+            return;
+          }
+          botao.innerText = 'Registrar presença';
+          envioLiberado = true; form.submit();
+        },
         { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
       );
     });

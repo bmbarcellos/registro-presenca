@@ -20,3 +20,14 @@ button:disabled { background-color: #7a8ba8; cursor: not-allowed; }
 .token-ok { background-color: #e8f5e9; color: #2e7d32; }
 .token-erro { background-color: #fbe9e7; color: #c62828; }
 .token-loading { background-color: #fff3e0; color: #e65100; }
+
+/* Aviso de falha de geolocalização.
+   Antes, a falha era silenciosa: o formulário enviava sem coordenada e o aluno
+   recebia "presença não validada fisicamente" — mensagem que o mandava procurar
+   no lugar errado. Este bloco explica a causa real e o que fazer. */
+.geo-aviso { display: none; margin-top: 10px; padding: 10px 12px; border-radius: 4px;
+             background-color: #fff8e1; border-left: 3px solid #e65100; color: #5d4037;
+             font-size: 0.8rem; line-height: 1.45; text-align: left; }
+.geo-aviso strong { display: block; margin-bottom: 5px; color: #bf360c; font-size: 0.85rem; }
+.geo-aviso ol { margin: 7px 0 0; padding-left: 18px; }
+.geo-aviso li { margin-bottom: 3px; }
