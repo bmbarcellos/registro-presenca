@@ -60,6 +60,17 @@
       margin: 0;
     }
 
+    .causas {
+      text-align: left;
+      margin: 18px 0 0;
+      padding-left: 20px;
+      font-size: 15px;
+      color: #444;
+      line-height: 1.5;
+    }
+
+    .causas li { margin-bottom: 10px; }
+
     .footer {
       margin-top: 28px;
       padding-top: 16px;
@@ -90,11 +101,23 @@
   <main class="card">
     <div class="icon">!</div>
 
-    <h1>Atenção! E-mail inválido.</h1>
+    <h1>Não foi possível validar seu e-mail</h1>
 
     <p>
-      Repita a operação com um e-mail institucional.
+      Sua presença não foi registrada. Há duas causas possíveis:
     </p>
+
+    <ul class="causas">
+      <li>
+        <b>Erro de digitação.</b> Confira se o endereço está exatamente como o
+        seu e-mail institucional, terminando em <b>@id.uff.br</b>, e tente de novo.
+      </li>
+      <li>
+        <b>Matrícula fora da lista.</b> Se o endereço estiver correto, sua
+        matrícula pode não constar na lista do semestre nesta disciplina.
+        Repetir o envio não resolve — procure a coordenação do curso.
+      </li>
+    </ul>
 
     <div class="footer">
       <span class="uff">Universidade Federal Fluminense</span>
