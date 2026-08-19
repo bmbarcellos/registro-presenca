@@ -175,13 +175,15 @@
     const codigo = err && err.code;
     if (codigo === 1) {            // PERMISSION_DENIED
       el.innerHTML =
-        '<strong>O navegador está bloqueando a localização</strong>' +
-        'Sua presença não pode ser validada sem ela. Uma vez negada, a permissão ' +
-        'não é pedida de novo — é preciso liberá-la nos ajustes:' +
+        '<strong>O navegador não liberou a localização</strong>' +
+        'Sua presença não pode ser validada sem ela.' +
         '<ol>' +
-        '<li><b>iPhone:</b> Ajustes › Safari › Localização › <b>Perguntar</b></li>' +
-        '<li><b>Android:</b> toque no cadeado ao lado do endereço › Permissões › Localização</li>' +
-        '<li>Recarregue esta página e toque em <b>Permitir</b></li>' +
+        '<li><b>Recarregue esta página</b> e toque em <b>Permitir</b> quando o ' +
+        'aviso aparecer.</li>' +
+        '<li>Se o aviso não aparecer, a permissão está bloqueada:<br>' +
+        '<b>iPhone:</b> Ajustes › Safari › Localização › <b>Perguntar</b><br>' +
+        '<b>Android:</b> toque no cadeado ao lado do endereço › Permissões › ' +
+        'Localização</li>' +
         '</ol>';
     } else if (codigo === 2) {     // POSITION_UNAVAILABLE
       el.innerHTML =
