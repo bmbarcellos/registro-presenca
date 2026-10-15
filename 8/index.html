@@ -1,76 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Registro de Presença — 8º Período</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../styles.css">
-  <script>
-    window.PERIODO_CONFIG = {
-      periodoLabel: "8º Período",
-      periodoValor: "8º periodo",
-      webhookRegistro: "https://webhook.artideia.com.br/webhook/registro-presenca",
-      webhookSessao:  "https://webhook.artideia.com.br/webhook/iniciar-sessao",
-      versao: "1.8.004",
-      horariosManha: ["07:30h às 09:00h", "09:00h às 10:30h", "10:45h às 12:15h"],
-      horariosTarde: ["13:45h às 15:45h", "16:00h às 18:00h"],
-      modulosPorDisciplina: {
-        "Epidemiologia": ["Não se aplica"],
-        "MIAI IV-A": ["Cardiologia","Clinica medica","DIP","Endocrinologia","Etica","Farmacologia","Medicina legal","Oncologia","Ortopedia","Pneumologia","Psiquiatria","Reumatologia","Toxicologia"],
-        "MICA IV-A": ["Pediatria"],
-        "TCS IV-B-A": ["Anatomia patologica","Patologia clinica"]
-      },
-      turnoPorDisciplina: {
-        "Epidemiologia": "todos",
-        "MIAI IV-A": "manha",
-        "MICA IV-A": "manha",
-        "TCS IV-B-A": "manha"
-      }
-    };
-  </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Registro de presença — indisponível</title>
+<style>
+  :root{--bg:#0B1B2B;--ink:#EAF1F0;--ink2:#A4B3B2;--accent:#4FB3C1}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:24px;text-align:center}
+  .box{max-width:460px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;margin-bottom:18px}
+  h1{font-size:1.3rem;margin:0 0 10px;color:var(--ink)}
+  p{margin:0 0 8px;color:var(--ink2)}
+</style>
 </head>
 <body>
-  <div class="container">
-    <img src="https://www.extensao.uff.br/images/uff-logo-4.png" alt="Universidade Federal Fluminense" class="logo">
-    <h1>Registro de Presença</h1>
-    <div class="periodo-badge" id="periodoLabel"></div>
-    <p>Preencha os dados para registrar sua participação na aula.</p>
-    <form id="presencaForm" method="POST" action="#">
-      <input type="hidden" name="periodo" id="periodoInput">
-      <label>Email institucional</label>
-      <input type="email" id="email" name="email_institucional" placeholder="exemplo@id.uff.br" required>
-      <div id="emailAviso" class="email-aviso">Atenção: utilize obrigatoriamente o email institucional (@id.uff.br)</div>
-      <label>Disciplina</label>
-      <select name="disciplina" id="disciplina" required><option value="">Selecione</option></select>
-      <label>Módulo</label>
-      <select name="modulo" id="modulo" required><option value="">Selecione</option></select>
-      <label>Horário da aula</label>
-      <select name="horario_aula" id="horario_aula" required><option value="">Selecione</option></select>
-      <div id="horarioAviso" class="alerta">Horário incompatível com a disciplina selecionada!</div>
-      <label>Palavra-chave</label>
-      <input type="text" name="palavra_chave" id="palavra_chave" required>
-      <input type="hidden" name="lat" id="lat">
-      <input type="hidden" name="lng" id="lng">
-      <input type="hidden" name="accuracy" id="accuracy">
-      <input type="hidden" name="token_sessao" id="token_sessao">
-      <input type="hidden" name="device_hash" id="device_hash">
-      <input type="hidden" name="device_id" id="device_id">
-      <div id="tokenStatus" class="token-status token-loading">⏳ Iniciando sessão segura...</div>
-      <div id="geoAviso" class="geo-aviso"></div>
-      <button type="submit">Registrar presença</button>
-    </form>
-    <form id="acaoForm" style="display:none"></form>
+  <div class="box">
+    <span class="dot"></span>
+    <h1>Registro de presença temporariamente indisponível</h1>
+    <p>O registro de presença para este período está fora do ar no momento.</p>
+    <p>Procure o seu professor para mais informações.</p>
   </div>
-  <div class="footer">
-    Universidade Federal Fluminense — UFF<br>
-    Sistema Eletrônico de Registro de Presença<br>
-    <span id="versaoLabel" style="font-size:0.65rem;"></span>
-  </div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function(){
-      document.getElementById('presencaForm').setAttribute('action', window.PERIODO_CONFIG.webhookRegistro);
-    });
-  </script>
-  <script src="../shared.js"></script>
 </body>
 </html>
